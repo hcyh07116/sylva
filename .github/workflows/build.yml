@@ -1,0 +1,28 @@
+name: Build Windows Executable
+
+on:
+  workflow_dispatch: # 允许你在网页上手动点击按钮触发编译
+  push:
+    branches: [ "main", "master" ] # 代码有更新时自动编译
+
+jobs:
+  build:
+    runs-on: windows-latest # 在 Windows 环境中运行
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        targets: x86_64-pc-windows-msvc # 指定编译为 64位 Windows 程序
+
+    - name: Build Release
+      run: cargo build --release
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Sylva-Windows-Build
+        path: target/release/*.exe # 打包生成的 exe 文件
